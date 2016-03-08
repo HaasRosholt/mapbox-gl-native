@@ -45,6 +45,8 @@
         'map/tile.cpp',
         'map/transform.cpp',
 
+        'tile/tile_id.cpp',
+
         'storage/offline.cpp',
         'storage/offline_database.cpp',
         'storage/offline_download.cpp',
