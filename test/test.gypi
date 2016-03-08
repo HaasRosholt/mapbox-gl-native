@@ -33,6 +33,7 @@
         'util/work_queue.cpp',
 
         'algorithm/covered_by_children.cpp',
+        'algorithm/generate_clip_ids.cpp',
 
         'api/annotations.cpp',
         'api/api_misuse.cpp',
