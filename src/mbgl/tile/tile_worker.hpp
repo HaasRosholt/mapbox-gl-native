@@ -39,7 +39,7 @@ using TileParseResult = variant<
 
 class TileWorker : public util::noncopyable {
 public:
-    TileWorker(TileID,
+    TileWorker(const OverscaledTileID&,
                std::string sourceID,
                SpriteStore&,
                GlyphAtlas&,
@@ -62,7 +62,7 @@ private:
     void insertBucket(const std::string& name, std::unique_ptr<Bucket>);
     void placeLayers(PlacementConfig);
 
-    const TileID id;
+    const OverscaledTileID id;
     const std::string sourceID;
 
     SpriteStore& spriteStore;

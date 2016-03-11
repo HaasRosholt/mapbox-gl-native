@@ -1,7 +1,6 @@
 #include <mbgl/layer/line_layer.hpp>
 #include <mbgl/style/style_bucket_parameters.hpp>
 #include <mbgl/renderer/line_bucket.hpp>
-#include <mbgl/map/tile_id.hpp>
 #include <mbgl/util/get_geometries.hpp>
 
 namespace mbgl {
@@ -74,7 +73,7 @@ std::unique_ptr<Bucket> LineLayer::createBucket(StyleBucketParameters& parameter
 
     bucket->layout = layout;
 
-    StyleCalculationParameters p(parameters.tileID.z);
+    StyleCalculationParameters p(parameters.tileID.overscaledZ);
     bucket->layout.lineCap.calculate(p);
     bucket->layout.lineJoin.calculate(p);
     bucket->layout.lineMiterLimit.calculate(p);
