@@ -17,6 +17,7 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.InfoWindow;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.MarkerView;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
@@ -54,8 +55,11 @@ public class MapboxMap {
     private CameraPosition mCameraPosition;
     private boolean mInvalidCameraPosition;
     private LongSparseArray<Annotation> mAnnotations;
+
     private List<Marker> mSelectedMarkers;
+    private List<MarkerView> mMarkerViews;
     private List<InfoWindow> mInfoWindows;
+
     private MapboxMap.InfoWindowAdapter mInfoWindowAdapter;
 
     private boolean mMyLocationEnabled;
@@ -85,6 +89,7 @@ public class MapboxMap {
         mProjection = new Projection(mapView);
         mAnnotations = new LongSparseArray<>();
         mSelectedMarkers = new ArrayList<>();
+        mMarkerViews = new ArrayList<>();
         mInfoWindows = new ArrayList<>();
     }
 
@@ -605,6 +610,12 @@ public class MapboxMap {
     // Annotations
     //
 
+    public void addMarkerView(MarkerView markerView){
+        markerView.setProjection(mProjection);
+        mMarkerViews.add(markerView);
+        mMapView.addView(markerView);
+    }
+
     /**
      * <p>
      * Adds a marker to this map.
@@ -993,6 +1004,18 @@ public class MapboxMap {
         return markers;
     }
 
+    @Nullable
+    public MarkerView getMarkerView(long id) {
+        MarkerView markerView = null;
+        List<Marker> markers = getMarkers();
+        for (Marker m : markers) {
+            if (m.getId() == id) {
+                markerView = m.getMarkerView();
+            }
+        }
+        return markerView;
+    }
+
     /**
      * Returns a list of all the polygons on the map.
      *
@@ -1178,6 +1201,11 @@ public class MapboxMap {
     // used by MapView
     List<InfoWindow> getInfoWindows() {
         return mInfoWindows;
+    }
+
+    //  used by MapView
+    List<MarkerView> getMarkerViews(){
+        return mMarkerViews;
     }
 
     private boolean isInfoWindowValidForMarker(@NonNull Marker marker) {
