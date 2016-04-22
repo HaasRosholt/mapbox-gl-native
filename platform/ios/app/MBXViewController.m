@@ -608,6 +608,16 @@ static const CLLocationCoordinate2D WorldTourDestinations[] = {
 
 #pragma mark - MGLMapViewDelegate
 
+- (MGLAnnotationView *)mapView:(MGLMapView *)mapView viewForAnnotation:(id<MGLAnnotation>)annotation
+{
+    MGLAnnotationView *annotationView = [[MGLAnnotationView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+    annotationView.backgroundColor = [UIColor blueColor];
+    annotationView.layer.cornerRadius = 15;
+    annotationView.alpha = 0.5;
+
+    return annotationView;
+}
+
 - (MGLAnnotationImage *)mapView:(MGLMapView * __nonnull)mapView imageForAnnotation:(id <MGLAnnotation> __nonnull)annotation
 {
     if ([annotation isKindOfClass:[MBXDroppedPinAnnotation class]]
