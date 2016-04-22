@@ -11,6 +11,7 @@
 		40FDA7431CC9157E00442548 /* MGLAnnotationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 40FDA7401CC9157E00442548 /* MGLAnnotationView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		40FDA7441CC9157E00442548 /* MGLAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 40FDA7411CC9157E00442548 /* MGLAnnotationView.m */; };
 		40FDA7451CC9157E00442548 /* MGLAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 40FDA7411CC9157E00442548 /* MGLAnnotationView.m */; };
+		40FDA76B1CCAAA6800442548 /* MBXAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 40FDA76A1CCAAA6800442548 /* MBXAnnotationView.m */; };
 		DA17BE301CC4BAC300402C41 /* MGLMapView_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DA17BE2F1CC4BAC300402C41 /* MGLMapView_Internal.h */; };
 		DA17BE311CC4BDAA00402C41 /* MGLMapView_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DA17BE2F1CC4BAC300402C41 /* MGLMapView_Internal.h */; };
 		DA1DC96A1CB6C6B7006E619F /* MBXCustomCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA1DC9671CB6C6B7006E619F /* MBXCustomCalloutView.m */; };
@@ -310,6 +311,8 @@
 /* Begin PBXFileReference section */
 		40FDA7401CC9157E00442548 /* MGLAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLAnnotationView.h; sourceTree = "<group>"; };
 		40FDA7411CC9157E00442548 /* MGLAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGLAnnotationView.m; sourceTree = "<group>"; };
+		40FDA7691CCAAA6800442548 /* MBXAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBXAnnotationView.h; sourceTree = "<group>"; };
+		40FDA76A1CCAAA6800442548 /* MBXAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBXAnnotationView.m; sourceTree = "<group>"; };
 		DA17BE2F1CC4BAC300402C41 /* MGLMapView_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLMapView_Internal.h; sourceTree = "<group>"; };
 		DA1DC94A1CB6C1C2006E619F /* Mapbox GL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mapbox GL.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA1DC9501CB6C1C2006E619F /* MBXAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBXAppDelegate.h; sourceTree = "<group>"; };
@@ -549,6 +552,8 @@
 			children = (
 				DA1DC9501CB6C1C2006E619F /* MBXAppDelegate.h */,
 				DA1DC9981CB6E054006E619F /* MBXAppDelegate.m */,
+				40FDA7691CCAAA6800442548 /* MBXAnnotationView.h */,
+				40FDA76A1CCAAA6800442548 /* MBXAnnotationView.m */,
 				DA1DC9661CB6C6B7006E619F /* MBXCustomCalloutView.h */,
 				DA1DC9671CB6C6B7006E619F /* MBXCustomCalloutView.m */,
 				DA1DC9681CB6C6B7006E619F /* MBXOfflinePacksTableViewController.h */,
@@ -1227,6 +1232,7 @@
 				DA1DC96B1CB6C6B7006E619F /* MBXOfflinePacksTableViewController.m in Sources */,
 				DA1DC96A1CB6C6B7006E619F /* MBXCustomCalloutView.m in Sources */,
 				DA1DC99B1CB6E064006E619F /* MBXViewController.m in Sources */,
+				40FDA76B1CCAAA6800442548 /* MBXAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

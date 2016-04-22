@@ -3,6 +3,7 @@
 #import "MBXAppDelegate.h"
 #import "MBXCustomCalloutView.h"
 #import "MBXOfflinePacksTableViewController.h"
+#import "MBXAnnotationView.h"
 
 #import <Mapbox/Mapbox.h>
 
@@ -610,11 +611,7 @@ static const CLLocationCoordinate2D WorldTourDestinations[] = {
 
 - (MGLAnnotationView *)mapView:(MGLMapView *)mapView viewForAnnotation:(id<MGLAnnotation>)annotation
 {
-    MGLAnnotationView *annotationView = [[MGLAnnotationView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    annotationView.backgroundColor = [UIColor blueColor];
-    annotationView.layer.cornerRadius = 15;
-    annotationView.alpha = 0.5;
-
+    MBXAnnotationView *annotationView = [[MBXAnnotationView alloc] init];
     return annotationView;
 }
 

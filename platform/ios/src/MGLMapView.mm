@@ -3108,17 +3108,29 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
             id <MGLAnnotation> annotation = [self annotationWithTag:annotationTag];
             NSAssert(annotation, @"Unknown annotation found nearby tap");
             
-            MGLAnnotationImage *annotationImage = [self imageOfAnnotationWithTag:annotationTag];
-            if ( ! annotationImage.enabled)
+            MGLAnnotationContext annotationContext = _annotationContextsByAnnotationTag[annotationTag];
+           
+            CGRect annotationRect;
+            if (annotationContext.annotationView)
             {
-                return true;
+                annotationRect = annotationContext.annotationView.frame;
+            }
+            else
+            {
+                MGLAnnotationImage *annotationImage = [self imageOfAnnotationWithTag:annotationTag];
+                if ( ! annotationImage.enabled)
+                {
+                    return true;
+                }
+                
+                // Filter out the annotation if the fattened finger didn’t land
+                // within the image’s alignment rect.
+                annotationRect = [self frameOfImage:annotationImage.image ?: fallbackImage centeredAtCoordinate:annotation.coordinate];
             }
             
-            // Filter out the annotation if the fattened finger didn’t land
-            // within the image’s alignment rect.
-            CGRect annotationRect = [self frameOfImage:annotationImage.image ?: fallbackImage centeredAtCoordinate:annotation.coordinate];
             return !!!CGRectIntersectsRect(annotationRect, hitRect);
         });
+        
         nearbyAnnotations.resize(std::distance(nearbyAnnotations.begin(), end));
     }
     
@@ -3361,23 +3373,35 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
 /// and is appropriate for positioning a popover.
 - (CGRect)positioningRectForCalloutForAnnotationWithTag:(MGLAnnotationTag)annotationTag
 {
-    id <MGLAnnotation> annotation = [self annotationWithTag:annotationTag];
-    if ( ! annotation)
+    MGLAnnotationContext annotationContext = _annotationContextsByAnnotationTag[annotationTag];
+    MGLAnnotationView *annotationView = annotationContext.annotationView;
+    CGRect positioningRect;
+    
+    if (annotationView)
     {
-        return CGRectZero;
+        positioningRect = annotationView.frame;
     }
-    UIImage *image = [self imageOfAnnotationWithTag:annotationTag].image;
-    if ( ! image)
+    else
     {
-        image = [self dequeueReusableAnnotationImageWithIdentifier:MGLDefaultStyleMarkerSymbolName].image;
-    }
-    if ( ! image)
-    {
-        return CGRectZero;
+        id <MGLAnnotation> annotation = [self annotationWithTag:annotationTag];
+        if ( ! annotation)
+        {
+            return CGRectZero;
+        }
+        UIImage *image = [self imageOfAnnotationWithTag:annotationTag].image;
+        if ( ! image)
+        {
+            image = [self dequeueReusableAnnotationImageWithIdentifier:MGLDefaultStyleMarkerSymbolName].image;
+        }
+        if ( ! image)
+        {
+            return CGRectZero;
+        }
+        
+        positioningRect = [self frameOfImage:image centeredAtCoordinate:annotation.coordinate];
+        positioningRect.origin.x -= 0.5;
     }
     
-    CGRect positioningRect = [self frameOfImage:image centeredAtCoordinate:annotation.coordinate];
-    positioningRect.origin.x -= 0.5;
     return CGRectInset(positioningRect, -MGLAnnotationImagePaddingForCallout,
                        -MGLAnnotationImagePaddingForCallout);
 }
