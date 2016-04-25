@@ -611,7 +611,13 @@ static const CLLocationCoordinate2D WorldTourDestinations[] = {
 
 - (MGLAnnotationView *)mapView:(MGLMapView *)mapView viewForAnnotation:(id<MGLAnnotation>)annotation
 {
-    MBXAnnotationView *annotationView = [[MBXAnnotationView alloc] init];
+    MBXAnnotationView *annotationView = (MBXAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"MBXAnnotationView"];
+    annotationView.centerColor = [UIColor redColor];
+    [annotationView setNeedsDisplay];
+    if (!annotationView)
+    {
+        annotationView = [[MBXAnnotationView alloc] init];
+    }
     return annotationView;
 }
 

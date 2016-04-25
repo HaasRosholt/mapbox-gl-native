@@ -1,7 +1,7 @@
 #import "MBXAnnotationView.h"
 
-static const CGFloat size = 35.0;
-static const CGFloat padding = 7.5;
+static const CGFloat MBXAnnotationViewSize = 35.0;
+static const CGFloat MBXAnnotationViewPadding = 7.5;
 
 @implementation MBXAnnotationView
 
@@ -26,8 +26,8 @@ static const CGFloat padding = 7.5;
 - (void)commonInit
 {
     CGRect frame = self.frame;
-    frame.size.width = size + padding * 2;
-    frame.size.height = size + padding * 2;
+    frame.size.width = MBXAnnotationViewSize + MBXAnnotationViewPadding * 2;
+    frame.size.height = MBXAnnotationViewSize + MBXAnnotationViewPadding * 2;
     self.frame = frame;
     self.backgroundColor = [UIColor clearColor];
 }
@@ -35,7 +35,7 @@ static const CGFloat padding = 7.5;
 - (void)drawRect:(CGRect)rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
-    UIColor *color = [[UIColor alloc] initWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    UIColor *color = self.centerColor ?: [[UIColor alloc] initWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
     UIColor *color2 = [[UIColor alloc] initWithRed:0.258 green:0.909 blue:1.0 alpha:1.0];
     
     NSShadow *shadow = [[NSShadow alloc] init];
@@ -44,7 +44,7 @@ static const CGFloat padding = 7.5;
     shadow.shadowBlurRadius = 24.0;
     
     //// Oval Drawing
-    UIBezierPath *ovalPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(padding, padding, size, size)];
+    UIBezierPath *ovalPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(MBXAnnotationViewPadding, MBXAnnotationViewPadding, MBXAnnotationViewSize, MBXAnnotationViewSize)];
     [color setFill];
     [ovalPath fill];
     
@@ -71,7 +71,7 @@ static const CGFloat padding = 7.5;
     CGContextRestoreGState(context);
     
     [color2 setStroke];
-    ovalPath.lineWidth = padding;
+    ovalPath.lineWidth = MBXAnnotationViewPadding;
     [ovalPath stroke];
 }
 
