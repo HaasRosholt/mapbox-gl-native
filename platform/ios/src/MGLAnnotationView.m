@@ -7,7 +7,6 @@
 
 @end
 
-
 @implementation MGLAnnotationView
 
 @end

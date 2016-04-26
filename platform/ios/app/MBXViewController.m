@@ -613,10 +613,9 @@ static const CLLocationCoordinate2D WorldTourDestinations[] = {
 {
     MBXAnnotationView *annotationView = (MBXAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"MBXAnnotationView"];
     annotationView.centerColor = [UIColor redColor];
-    [annotationView setNeedsDisplay];
     if (!annotationView)
     {
-        annotationView = [[MBXAnnotationView alloc] init];
+        annotationView = [[[NSBundle mainBundle] loadNibNamed:@"MBXAnnotationView" owner:self options:nil] objectAtIndex:0];
     }
     return annotationView;
 }

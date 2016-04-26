@@ -248,7 +248,6 @@ public:
     MGLAnnotationContextMap _annotationContextsByAnnotationTag;
     /// Tag of the selected annotation. If the user location annotation is selected, this ivar is set to `MGLAnnotationTagNotFound`.
     MGLAnnotationTag _selectedAnnotationTag;
-    NS_MUTABLE_ARRAY_OF(MGLAnnotationView *) *_annotationViews;
     NS_MUTABLE_DICTIONARY_OF(NSString *, NSMutableArray *) *_annotationViewReuseQueueByIdentifier;
     BOOL _userLocationAnnotationIsSelected;
     /// Size of the rectangle formed by unioning the maximum slop area around every annotation image.
@@ -409,7 +408,6 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
     // Set up annotation management and selection state.
     _annotationImagesByIdentifier = [NSMutableDictionary dictionary];
     _annotationContextsByAnnotationTag = {};
-    _annotationViews = [NSMutableArray array];
     _annotationViewReuseQueueByIdentifier = [NSMutableDictionary dictionary];
     _selectedAnnotationTag = MGLAnnotationTagNotFound;
     _annotationsNearbyLastTap = {};
@@ -850,7 +848,6 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
         _mbglMap->render();
 
         [self updateUserLocationAnnotationView];
-        [self updateAnnotationViews];
     }
 }
 
@@ -2782,8 +2779,8 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
                 annotationView = [self addAnnotationViewWithAnnotation:annotation];
                 if (annotationView) {
                     annotationViewsForAnnotation[annotationValue] = annotationView;
+                    annotationView.center = [self convertCoordinate:annotation.coordinate toPointToView:self];
                     [self.glView addSubview:annotationView];
-                    [_annotationViews addObject:annotationView];
                 }
             }
             
@@ -2895,8 +2892,7 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
     if (annotationView)
     {
         NSAssert([annotationView isKindOfClass:[MGLAnnotationView class]], @"Annotation view %@ is not an MGLAnnotationView", annotationView);
-        annotationView.center = [self convertCoordinate:annotation.coordinate toPointToView:self];
-        ((MGLAnnotationView *) annotationView).reuseIdentifier = self.lastAnnotationViewReuseIdentifier;
+        annotationView.reuseIdentifier = self.lastAnnotationViewReuseIdentifier;
         self.lastAnnotationViewReuseIdentifier = nil;
     }
     
@@ -3005,7 +3001,6 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
         MGLAnnotationContext &annotationContext = _annotationContextsByAnnotationTag.at(annotationTag);
         MGLAnnotationView *annotationView = annotationContext.annotationView;
         [annotationView removeFromSuperview];
-        [_annotationViews removeObject:annotationView];
         
         annotationTagsToRemove.push_back(annotationTag);
 
@@ -4225,6 +4220,9 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
             {
                 [self.delegate mapViewRegionIsChanging:self];
             }
+            
+            [self updateAnnotationViews];
+            
             break;
         }
         case mbgl::MapChangeRegionDidChange:
@@ -4312,17 +4310,12 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
 
 - (void)updateAnnotationViews
 {
-    // Hide all annotation views
-    for (MGLAnnotationView *annotationView in _annotationViews)
-    {
-        annotationView.hidden = YES;
-    }
-    
     // Update all visible annotation views
-    std::vector<MGLAnnotationTag> annotationTags = [self annotationTagsInRect:CGRectInset(self.bounds, 0, 0)];
+    std::set<MGLAnnotationTag> visibleTags;
+    std::vector<MGLAnnotationTag> annotationTags = [self annotationTagsInRect:CGRectInset(self.bounds, -50, -50)];
     for(auto const& annotationTag: annotationTags)
     {
-        MGLAnnotationContext &annotationContext = _annotationContextsByAnnotationTag[annotationTag];
+        auto &annotationContext = _annotationContextsByAnnotationTag[annotationTag];
         id<MGLAnnotation> annotation = annotationContext.annotation;
         CGPoint annotationPoint = [self convertCoordinate:annotation.coordinate toPointToView:self];
        
@@ -4339,7 +4332,6 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
                 if (!annotationView.superview)
                 {
                     [self.glView addSubview:annotationView];
-                    [_annotationViews addObject:annotationView];
                 }
                 
                 annotationContext.annotationView = annotationView;
@@ -4348,24 +4340,26 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
         
         annotationContext.annotationView.center = annotationPoint;
         annotationContext.annotationView.hidden = NO;
+        visibleTags.insert(annotationTag);
     }
     
     // Add offscreen annotation views to reuse queue
     for (auto &pair : _annotationContextsByAnnotationTag)
     {
+        MGLAnnotationTag annotationTag = pair.first;
         MGLAnnotationContext &annotationContext = pair.second;
         MGLAnnotationView *annotationView = annotationContext.annotationView;
         NSMutableArray *annotationViewReuseQueue = [self annotationViewReuseQueueForIdentifier:annotationContext.viewReuseIdentifier];
-        
-        if (annotationView.hidden && ![annotationViewReuseQueue containsObject:annotationView])
+       
+        const bool tagIsNotVisible = visibleTags.find(annotationTag) == visibleTags.end();
+       
+        if (tagIsNotVisible && annotationView && ![annotationViewReuseQueue containsObject:annotationView])
         {
             [annotationViewReuseQueue addObject:annotationView];
+            annotationView.hidden = YES;
             annotationContext.annotationView = NULL;
         }
-        
-        NSLog(@"================> queue: %@, count: %ld", annotationContext.viewReuseIdentifier, (long)annotationViewReuseQueue.count);
     }
-    
 }
 
 - (void)updateUserLocationAnnotationViewAnimatedWithDuration:(NSTimeInterval)duration
