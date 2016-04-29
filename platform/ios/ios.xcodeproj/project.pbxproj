@@ -310,6 +310,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		402E9DE01CD2C76200FD4519 /* Mapbox.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Mapbox.playground; sourceTree = "<group>"; };
 		40FC668B1CCE8CFC00AFCF7D /* MGLAnnotationView_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MGLAnnotationView_Private.h; path = src/MGLAnnotationView_Private.h; sourceTree = "<group>"; };
 		40FC668C1CCE8D4F00AFCF7D /* MGLAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGLAnnotationView.h; path = src/MGLAnnotationView.h; sourceTree = "<group>"; };
 		40FC668D1CCE8D4F00AFCF7D /* MGLAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGLAnnotationView.m; path = src/MGLAnnotationView.m; sourceTree = "<group>"; };
@@ -522,9 +523,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		402E9DE21CD3A56500FD4519 /* Playground */ = {
+			isa = PBXGroup;
+			children = (
+				402E9DE01CD2C76200FD4519 /* Mapbox.playground */,
+			);
+			name = Playground;
+			sourceTree = "<group>";
+		};
 		DA1DC9411CB6C1C2006E619F = {
 			isa = PBXGroup;
 			children = (
+				402E9DE21CD3A56500FD4519 /* Playground */,
 				DA1DC94C1CB6C1C2006E619F /* Demo App */,
 				DABCABA91CB80692000A7C39 /* Benchmarking App */,
 				DA8847D31CBAF91600AB86E3 /* SDK */,
