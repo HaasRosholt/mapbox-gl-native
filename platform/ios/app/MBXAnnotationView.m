@@ -2,24 +2,20 @@
 
 @interface MBXAnnotationView ()
 
-@property (weak, nonatomic) IBOutlet UIView *centerView;
+@property (nonatomic) UIView *centerView;
 
 @end
 
 @implementation MBXAnnotationView
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    self = [super initWithCoder:coder];
-    if (self) {
-        self.layer.cornerRadius = CGRectGetWidth(self.bounds) / 2.0;
-    }
-    return self;
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.centerView.layer.cornerRadius = CGRectGetWidth(self.centerView.bounds) / 2.0;
+    if (!self.centerView) {
+        self.backgroundColor = [UIColor blueColor];
+        self.centerView = [[UIView alloc] initWithFrame:CGRectMake(5,5, CGRectGetWidth(self.bounds) - 10, CGRectGetWidth(self.bounds) - 10)];
+        self.centerView.backgroundColor = self.centerColor;
+        [self addSubview:self.centerView];
+    }
 }
 
 - (void)setCenterColor:(UIColor *)centerColor {

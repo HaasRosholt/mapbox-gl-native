@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		400165041CCFC618005583CC /* MBXAnnotationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 400165031CCFC618005583CC /* MBXAnnotationView.xib */; };
 		40FC668F1CCE8D6000AFCF7D /* MGLAnnotationView_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 40FC668B1CCE8CFC00AFCF7D /* MGLAnnotationView_Private.h */; };
 		40FC66901CCE8D6A00AFCF7D /* MGLAnnotationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 40FC668C1CCE8D4F00AFCF7D /* MGLAnnotationView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		40FC66911CCE8D6A00AFCF7D /* MGLAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 40FC668D1CCE8D4F00AFCF7D /* MGLAnnotationView.m */; };
@@ -311,7 +310,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		400165031CCFC618005583CC /* MBXAnnotationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MBXAnnotationView.xib; sourceTree = "<group>"; };
 		40FC668B1CCE8CFC00AFCF7D /* MGLAnnotationView_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MGLAnnotationView_Private.h; path = src/MGLAnnotationView_Private.h; sourceTree = "<group>"; };
 		40FC668C1CCE8D4F00AFCF7D /* MGLAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGLAnnotationView.h; path = src/MGLAnnotationView.h; sourceTree = "<group>"; };
 		40FC668D1CCE8D4F00AFCF7D /* MGLAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MGLAnnotationView.m; path = src/MGLAnnotationView.m; sourceTree = "<group>"; };
@@ -558,7 +556,6 @@
 				DA1DC9981CB6E054006E619F /* MBXAppDelegate.m */,
 				40FDA7691CCAAA6800442548 /* MBXAnnotationView.h */,
 				40FDA76A1CCAAA6800442548 /* MBXAnnotationView.m */,
-				400165031CCFC618005583CC /* MBXAnnotationView.xib */,
 				DA1DC9661CB6C6B7006E619F /* MBXCustomCalloutView.h */,
 				DA1DC9671CB6C6B7006E619F /* MBXCustomCalloutView.m */,
 				DA1DC9681CB6C6B7006E619F /* MBXOfflinePacksTableViewController.h */,
