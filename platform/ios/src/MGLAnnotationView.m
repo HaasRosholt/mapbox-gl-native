@@ -9,4 +9,14 @@
 
 @implementation MGLAnnotationView
 
+- (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
+{
+    // Allow mbgl to drive animation of this view’s bounds.
+    if ([event isEqualToString:@"bounds"])
+    {
+        return [NSNull null];
+    }
+    return [super actionForLayer:layer forKey:event];
+}
+
 @end
