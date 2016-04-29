@@ -202,7 +202,8 @@ public:
                           MGLCalloutViewDelegate,
                           UIAlertViewDelegate,
                           MGLMultiPointDelegate,
-                          MGLAnnotationImageDelegate>
+                          MGLAnnotationImageDelegate,
+                          MGLAnnotationViewDelegate>
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
@@ -2894,7 +2895,9 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
     if (annotationView)
     {
         NSAssert([annotationView isKindOfClass:[MGLAnnotationView class]], @"Annotation view %@ is not an MGLAnnotationView", annotationView);
+        annotationView.delegate = self;
         annotationView.reuseIdentifier = self.lastAnnotationViewReuseIdentifier;
+        annotationView.annotation = annotation;
         self.lastAnnotationViewReuseIdentifier = nil;
     }
     
@@ -3120,24 +3123,16 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
             NSAssert(annotation, @"Unknown annotation found nearby tap");
             
             MGLAnnotationContext annotationContext = _annotationContextsByAnnotationTag[annotationTag];
-           
-            CGRect annotationRect;
-            if (annotationContext.annotationView)
+            
+            MGLAnnotationImage *annotationImage = [self imageOfAnnotationWithTag:annotationTag];
+            if ( ! annotationImage.enabled)
             {
-                annotationRect = annotationContext.annotationView.frame;
+                return true;
             }
-            else
-            {
-                MGLAnnotationImage *annotationImage = [self imageOfAnnotationWithTag:annotationTag];
-                if ( ! annotationImage.enabled)
-                {
-                    return true;
-                }
-                
-                // Filter out the annotation if the fattened finger didn’t land
-                // within the image’s alignment rect.
-                annotationRect = [self frameOfImage:annotationImage.image ?: fallbackImage centeredAtCoordinate:annotation.coordinate];
-            }
+            
+            // Filter out the annotation if the fattened finger didn’t land
+            // within the image’s alignment rect.
+            CGRect annotationRect = [self frameOfImage:annotationImage.image ?: fallbackImage centeredAtCoordinate:annotation.coordinate];
             
             return !!!CGRectIntersectsRect(annotationRect, hitRect);
         });
@@ -3288,17 +3283,34 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
     if (annotationTag == MGLAnnotationTagNotFound && annotation != self.userLocation)
     {
         [self addAnnotation:annotation];
+        annotationTag = [self annotationTagForAnnotation:annotation];
+        if (annotationTag == MGLAnnotationTagNotFound) return;
     }
     
-    // The annotation can’t be selected if no part of it is hittable.
-    CGRect positioningRect = [self positioningRectForCalloutForAnnotationWithTag:annotationTag];
+    MGLAnnotationContext &annotationContext = _annotationContextsByAnnotationTag.at(annotationTag);
+    CGRect positioningRect;
+   
+    if (annotationContext.annotationView)
+    {
+        // Annotations represented by views use the view frame as the positioning rect.
+        positioningRect = annotationContext.annotationView.frame;
+        positioningRect.origin.y -= 0.5;
+    }
+    else
+    {
+        // Annotations represented by GL images use the image frame as the positioning rect.
+        positioningRect = [self positioningRectForCalloutForAnnotationWithTag:annotationTag];
+    }
+    
+     // The client can request that any annotation be selected (even ones that are offscreen).
+     // The annotation can’t be selected if no part of it is hittable.
     if ( ! CGRectIntersectsRect(positioningRect, self.bounds) && annotation != self.userLocation)
     {
         return;
     }
 
     self.selectedAnnotation = annotation;
-
+  
     if ([annotation respondsToSelector:@selector(title)] &&
         annotation.title &&
         [self.delegate respondsToSelector:@selector(mapView:annotationCanShowCallout:)] &&
@@ -3385,33 +3397,24 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
 - (CGRect)positioningRectForCalloutForAnnotationWithTag:(MGLAnnotationTag)annotationTag
 {
     MGLAnnotationContext annotationContext = _annotationContextsByAnnotationTag[annotationTag];
-    MGLAnnotationView *annotationView = annotationContext.annotationView;
-    CGRect positioningRect;
     
-    if (annotationView)
+    id <MGLAnnotation> annotation = [self annotationWithTag:annotationTag];
+    if ( ! annotation)
     {
-        positioningRect = annotationView.frame;
+        return CGRectZero;
     }
-    else
+    UIImage *image = [self imageOfAnnotationWithTag:annotationTag].image;
+    if ( ! image)
     {
-        id <MGLAnnotation> annotation = [self annotationWithTag:annotationTag];
-        if ( ! annotation)
-        {
-            return CGRectZero;
-        }
-        UIImage *image = [self imageOfAnnotationWithTag:annotationTag].image;
-        if ( ! image)
-        {
-            image = [self dequeueReusableAnnotationImageWithIdentifier:MGLDefaultStyleMarkerSymbolName].image;
-        }
-        if ( ! image)
-        {
-            return CGRectZero;
-        }
-        
-        positioningRect = [self frameOfImage:image centeredAtCoordinate:annotation.coordinate];
-        positioningRect.origin.x -= 0.5;
+        image = [self dequeueReusableAnnotationImageWithIdentifier:MGLDefaultStyleMarkerSymbolName].image;
     }
+    if ( ! image)
+    {
+        return CGRectZero;
+    }
+    
+    CGRect positioningRect = [self frameOfImage:image centeredAtCoordinate:annotation.coordinate];
+    positioningRect.origin.x -= 0.5;
     
     return CGRectInset(positioningRect, -MGLAnnotationImagePaddingForCallout,
                        -MGLAnnotationImagePaddingForCallout);
@@ -3576,6 +3579,13 @@ mbgl::Duration MGLDurationInSeconds(NSTimeInterval duration)
             _mbglMap->updatePointAnnotation(pair.first, { latLng, iconIdentifier.UTF8String ?: "" });
         }
     }
+}
+
+#pragma mark - Annotation View Delegate
+
+- (void)annotationView:(MGLAnnotationView *)annotationView didReceiveTapAtPoint:(CGPoint)point
+{
+    [self selectAnnotation:annotationView.annotation animated:YES];
 }
 
 #pragma mark - User Location -

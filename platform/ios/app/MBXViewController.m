@@ -462,7 +462,7 @@ static const CLLocationCoordinate2D WorldTourDestinations[] = {
                                  toCoordinateFromView:self.mapView];
         point.title = @"Dropped Pin";
         point.subtitle = [[[MGLCoordinateFormatter alloc] init] stringFromCoordinate:point.coordinate];
-        [self.mapView addAnnotation:point];
+        // Calling `addAnnotation:` on mapView is not required since `selectAnnotation:animated` has the side effect of adding the annotation if required
         [self.mapView selectAnnotation:point animated:YES];
     }
 }
