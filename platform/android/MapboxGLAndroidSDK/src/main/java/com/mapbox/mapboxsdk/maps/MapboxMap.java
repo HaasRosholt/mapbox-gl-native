@@ -19,7 +19,6 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.InfoWindow;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.MarkerView;
 import com.mapbox.mapboxsdk.annotations.Polygon;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
@@ -614,9 +613,8 @@ public class MapboxMap {
     // Annotations
     //
 
-    public void addMarkerView(MarkerView markerView) {
-        markerView.setProjection(mProjection);
-        //mMarkerViews.add(markerView);
+    public void addMarkerView(long key, View markerView) {
+        mMarkerViews.append(key, markerView);
         mMapView.addView(markerView);
     }
 
@@ -1006,18 +1004,6 @@ public class MapboxMap {
             }
         }
         return markers;
-    }
-
-    @Nullable
-    public MarkerView getMarkerView(long id) {
-        MarkerView markerView = null;
-        List<Marker> markers = getMarkers();
-        for (Marker m : markers) {
-            if (m.getId() == id) {
-                markerView = m.getMarkerView();
-            }
-        }
-        return markerView;
     }
 
     /**
