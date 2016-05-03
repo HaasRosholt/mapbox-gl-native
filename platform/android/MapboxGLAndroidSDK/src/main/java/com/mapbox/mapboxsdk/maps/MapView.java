@@ -32,9 +32,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pools;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ScaleGestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
+
+import com.mapbox.mapboxsdk.R;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -59,7 +63,6 @@ import android.widget.ZoomButtonsController;
 import com.almeros.android.multitouch.gesturedetectors.RotateGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.ShoveGestureDetector;
 import com.almeros.android.multitouch.gesturedetectors.TwoFingerGestureDetector;
-import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.annotations.Annotation;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -94,9 +97,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -247,6 +252,8 @@ public class MapView extends FrameLayout {
         if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN_MULTITOUCH)) {
             mMapboxMap.getUiSettings().setZoomControlsEnabled(true);
         }
+
+
     }
 
     private void setInitialState(MapboxMapOptions options) {
@@ -449,10 +456,42 @@ public class MapView extends FrameLayout {
                             iterator.remove();
                         }
                     }
-                } else if (change == REGION_IS_CHANGING) {
+                } else if (change == REGION_IS_CHANGING || change == REGION_DID_CHANGE) {
                     LatLngBounds bounds = mMapboxMap.getProjection().getVisibleRegion().latLngBounds;
                     long[] ids = mNativeMapView.getAnnotationsInBounds(bounds);
-                    Log.v(MapboxConstants.TAG, "Region is changing ane we are seeing: "+ids.length+ " point annotations");
+
+                    Map<Marker,View> markerViews = mMapboxMap.getMarkerViews();
+
+                    Iterator<Object> it = map.keySet().iterator();
+
+                    while (it.hasNext())
+                    {
+                        it.next();
+                        if (something)
+                            it.remove();
+                    }
+
+                    for (long id : ids) {
+                        boolean found = false;
+                        for (View view : markerViews) {
+                            if (view.getMarker().getId() == id) {
+                                found = true;
+                            }
+                        }
+                        if (!found) {
+                            MapboxMap.MarkerViewAdapter adapter = mMapboxMap.getMarkerViewAdapter();
+                            Marker marker = (Marker) mMapboxMap.getAnnotation(id);
+                            if (adapter != null) {
+                                View view = adapter.getView(marker, marker.getMarkerView(), MapView.this);
+                                if (view != null) {
+                                    markerViews.add(view);
+                                }
+                            }
+                        }
+                    }
+
+
+                    Log.v(MapboxConstants.TAG, "Region is changing ane we are seeing: " + ids.length + " point annotations  " + change);
 //                    for (long id : ids) {
 //                        Log.v(MapboxConstants.TAG, "Marker: "+id);
 //                    }
@@ -1310,13 +1349,15 @@ public class MapView extends FrameLayout {
 
         private Surface mSurface;
 
+        private static final int VIEW_MARKERS_POOL_SIZE = 20;
+
+
         // Called when the native surface texture has been created
         // Must do all EGL/GL ES initialization here
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             mNativeMapView.createSurface(mSurface = new Surface(surface));
             mNativeMapView.resizeFramebuffer(width, height);
-
             mHasSurface = true;
         }
 
@@ -1357,8 +1398,15 @@ public class MapView extends FrameLayout {
             mCompassView.update(getDirection());
             mMyLocationView.update();
 
-            for (MarkerView view : mMapboxMap.getMarkerViews()) {
-                view.update();
+            Map<Marker,View> viewMarkerMap = mMapboxMap.getMarkerViews();
+
+            View view;
+
+            for (Map.Entry<Marker, View> entry : viewMarkerMap.entrySet()){
+                PointF point = mMapboxMap.getProjection().toScreenLocation(entry.getKey().getPosition());
+                view = entry.getValue();
+                setX(point.x - (view.getMeasuredWidth()/2));
+                setY(point.y - (view.getMeasuredHeight()/2));
             }
 
             for (InfoWindow infoWindow : mMapboxMap.getInfoWindows()) {
