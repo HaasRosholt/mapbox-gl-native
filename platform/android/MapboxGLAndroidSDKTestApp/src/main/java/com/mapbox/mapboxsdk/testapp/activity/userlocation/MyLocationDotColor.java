@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.widgets.MyLocationViewSettings;
 import com.mapbox.mapboxsdk.testapp.R;
 
 public class MyLocationDotColor extends AppCompatActivity implements LocationListener {
@@ -56,36 +57,37 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
                 toggleGps(!mapboxMap.isMyLocationEnabled());
+
+
+                // handle default button clicks
+                ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.default_user_dot_coloring_button,new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.my_location_ring));
+                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
+                    }
+                });
+
+                // handle tint user dot button clicks
+                ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.tint_user_dot_button,new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
+                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
+                    }
+                });
+
+                // handle tint accuracy ring button clicks
+                ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.user_accuracy_ring_tint_button,new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.accent));
+                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
+                    }
+                });
             }
         });
-
-        // handle default button clicks
-        ViewUtils.attachClickListener(this, R.id.default_user_dot_coloring_button,new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.my_location_ring));
-                map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
-            }
-        });
-
-        // handle tint user dot button clicks
-        ViewUtils.attachClickListener(this, R.id.tint_user_dot_button,new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
-                map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
-            }
-        });
-
-        // handle tint accuracy ring button clicks
-        ViewUtils.attachClickListener(this, R.id.user_accuracy_ring_tint_button,new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.accent));
-                map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
-            }
-        });
-
+        
         LocationServices.getLocationServices(this).addLocationListener(this);
     }
 
