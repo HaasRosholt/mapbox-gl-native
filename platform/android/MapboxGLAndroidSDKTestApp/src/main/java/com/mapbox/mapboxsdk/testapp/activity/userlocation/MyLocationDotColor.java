@@ -59,12 +59,14 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
                 toggleGps(!mapboxMap.isMyLocationEnabled());
 
 
+                final MyLocationViewSettings myLocationViewSettings = mapboxMap.getMyLocationViewSettings();
+
                 // handle default button clicks
                 ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.default_user_dot_coloring_button,new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.my_location_ring));
-                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
+                        myLocationViewSettings.setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.my_location_ring));
+                        myLocationViewSettings.setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
                     }
                 });
 
@@ -72,8 +74,8 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
                 ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.tint_user_dot_button,new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
-                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
+                        myLocationViewSettings.setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
+                        myLocationViewSettings.setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_green));
                     }
                 });
 
@@ -81,13 +83,13 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
                 ViewUtils.attachClickListener(MyLocationDotColor.this, R.id.user_accuracy_ring_tint_button,new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        map.getMyLocationViewSettings().setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.accent));
-                        map.getMyLocationViewSettings().setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
+                        myLocationViewSettings.setAccuracyTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.accent));
+                        myLocationViewSettings.setForegroundTintColor(ContextCompat.getColor(MyLocationDotColor.this, R.color.mapbox_blue));
                     }
                 });
             }
         });
-        
+
         LocationServices.getLocationServices(this).addLocationListener(this);
     }
 
