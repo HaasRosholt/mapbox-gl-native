@@ -54,11 +54,8 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
-
                 map = mapboxMap;
-
                 toggleGps(!mapboxMap.isMyLocationEnabled());
-
             }
         });
 
@@ -185,6 +182,5 @@ public class MyLocationDotColor extends AppCompatActivity implements LocationLis
                 view.setOnClickListener(clickListener);
             }
         }
-
     }
 }
